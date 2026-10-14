@@ -14,6 +14,47 @@ Run a complete Windows 10 environment in your browser using Docker and GitHub Co
 
 ---
 
+## إعداد Codespace
+
+عند فتح Codespace جديد، يتم إعداد Node.js 20 وPython 3.11 وFFmpeg وأدوات البناء
+(بما فيها `gfortran`) تلقائياً عبر `.devcontainer/setup.sh`. لا تحتاج أي أوامر
+تثبيت يدوية. قد يستغرق الإعداد 5–10 دقائق أو أكثر حسب الشبكة وتنزيل الحزم.
+لـCodespace موجود مسبقاً، استخدم **Codespaces: Rebuild Container** لتطبيق الإعداد.
+
+**ملاحظة خاصة بـPC-Free:** هذا المستودع حالياً موقع ثابت، ولا يحتوي على
+`package.json` أو `tools/video-agent`. لذلك يتخطى الإعداد حزم Node عند غياب
+`package.json`، ويتخطى تجهيز أداة الفيديو وتنزيل نماذجها بالكامل عند غياب مجلدها.
+هذا الإعداد لا يشغّل Windows أو خادم ويب تلقائياً؛ تبقى تعليمات تشغيل PC-Free
+في الأقسام أدناه كما هي. المنفذ `3000` مهيأ لإعادة التوجيه عند تشغيل خدمة عليه.
+
+إذا أُضيفت أداة `tools/video-agent` لاحقاً، أعد تشغيل الإعداد من جذر المستودع:
+
+```bash
+bash .devcontainer/setup.sh
+```
+
+سيُنشئ بيئة Python معزولة في `tools/video-agent/.venv` ويثبت NumPy وSciPy
+وPiper وLibrosa وSoundFile وPyTorch وTorchvision بإصدارات CPU دون CUDA،
+وينزّل نموذج Piper العربي وملف إعداداته. لا ترفع `.venv` أو `node_modules`
+أو النماذج المنزّلة إلى Git. عند تعذر تنزيل نموذج، يظهر تحذير ويمكن إعادة تشغيل
+الإعداد؛ يحتفظ بالملفات المكتملة ويعيد محاولة الملفات الناقصة فقط.
+
+بعد الإعداد، لتشغيل أداة الفيديو **عند توفرها ووجود سكربت `start` في حزمتها**:
+
+```bash
+cd tools/video-agent
+source .venv/bin/activate
+npm start
+```
+
+اختبارات الإعداد مستقلة ولا تتطلب إضافة `package.json` للموقع:
+
+```bash
+npx --yes --package tsx@4 tsx --test tests/devcontainer.test.ts
+```
+
+---
+
 ## What is PC-Free?
 
 PC-Free is an open-source project that lets you run Windows 10 directly in your web browser using GitHub Codespaces and Docker. No local installation, no powerful hardware required, completely free.
@@ -32,6 +73,7 @@ PC-Free is an open-source project that lets you run Windows 10 directly in your 
 
 ## Table of Contents
 
+- [إعداد Codespace](#إعداد-codespace)
 - [Features](#features)
 - [Use Cases](#use-cases---when-to-use-pc-free)
 - [Quick Start](#quick-start-run-windows-10-in-5-minutes)
